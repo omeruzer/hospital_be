@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,15 @@ Route::group(['middleware'=>'auth:sanctum'],function(){
         Route::post('/add-analysis/{id}',[ServiceController::class,'addAnalysis']);
         Route::delete('/remove-analysis/{id}',[ServiceController::class,'removeAnalysis']);
         Route::patch('/change-status/{id}',[ServiceController::class,'changeStatus']);
+        Route::post('/add',[ServiceController::class,'add']);
+    });
+
+    Route::group(['prefix'=>'payment'],function(){
+        Route::get('/',[PaymentController::class,'getAll']);
+        Route::post('/',[PaymentController::class,'add']);
+        Route::get('/{id}',[PaymentController::class,'detail']);
+        Route::patch('/{id}',[PaymentController::class,'edit']);
+        Route::delete('/{id}',[PaymentController::class,'remove']);
     });
 
 });

@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Analysis;
 use App\Models\Prescriptions;
 use App\Models\Services;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ServiceController extends Controller
 {
-
     public function today(){
         $data = [];
         $services = Services::with('patient.user','serviceStatus')->whereDate('service_date', Carbon::today());
@@ -19,7 +20,7 @@ class ServiceController extends Controller
 
         return response()->json($data);
     }
-
+    
     public function after(){
         $data = [];
         $services = Services::with('patient.user','serviceStatus')->whereDate('service_date', '>', Carbon::today())
@@ -129,7 +130,28 @@ class ServiceController extends Controller
             'status_id'=>$request->status_id
         ]);
 
+        if($request->status_id==4){
+            // mail ile ödeme bilgileri gönderilecektir
+        }else if($request->status_id==2){
+            // mail ile hastanın gelmediği bildirimi yapılacaktır.
+        }else if($request->status_id==5){
+            // mail ile hastanın muayneyi iptal etme bildirimi yapılacaktır.
+        }
+
         return response()->json(['message'=>'Success']);
     }
 
+    public function add(Request $request){
+        $user = User::with('patient')->where('id',Auth::id())->first();
+
+        $service = Services::create([
+            'patient_id'=>$user->patient->id,
+            'service_no'=>'R-'.rand(100,9999999),
+            'status_id'=>1,
+            'desc'=>$request->desc,
+            'service_date'=>$request->service_date
+        ]);
+
+        return response()->json(['message'=>'Success','service'=>$service]);
+    }
 }

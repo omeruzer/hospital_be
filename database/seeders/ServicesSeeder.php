@@ -20,7 +20,7 @@ class ServicesSeeder extends Seeder
             $faker = \Faker\Factory::create(); 
 
             Services::create([
-                'status_id'=>rand(1,5),
+                'status_id'=>rand(1,4),
                 'service_no'=>'R-'.$i+1,
                 'patient_id'=>$i+1,
                 'desc'=>$faker->sentence(20),

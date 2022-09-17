@@ -22,9 +22,6 @@ class ServiceStatusSeeder extends Seeder
             'status_name'=>'Hasta Gelmedi'
         ]);
         ServiceStatus::create([
-            'status_name'=>'Hasta Muaynede'
-        ]);
-        ServiceStatus::create([
             'status_name'=>'Muayne tamamlandı'
         ]);
         ServiceStatus::create([

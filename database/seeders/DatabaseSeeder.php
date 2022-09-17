@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PatientsSeeder::class);
         $this->call(ServiceStatusSeeder::class);
         $this->call(ServicesSeeder::class);
+        $this->call(PaymentSeeder::class);
 
         // \App\Models\User::factory(10)->create();
 
