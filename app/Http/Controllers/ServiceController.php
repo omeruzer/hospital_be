@@ -12,18 +12,21 @@ use Illuminate\Support\Facades\Auth;
 
 class ServiceController extends Controller
 {
-    public function today(){
+
+    public function today()
+    {
         $data = [];
-        $services = Services::with('patient.user','serviceStatus')->whereDate('service_date', Carbon::today());
+        $services = Services::with('patient.user', 'serviceStatus')->whereDate('service_date', Carbon::today());
 
         $data['data'] = $services->paginate(10);
 
         return response()->json($data);
     }
-    
-    public function after(){
+
+    public function after()
+    {
         $data = [];
-        $services = Services::with('patient.user','serviceStatus')->whereDate('service_date', '>', Carbon::today())
+        $services = Services::with('patient.user', 'serviceStatus')->whereDate('service_date', '>', Carbon::today())
             ->orderBy('service_date', 'ASC');
 
         $data['data'] = $services->paginate(10);
@@ -31,9 +34,10 @@ class ServiceController extends Controller
         return response()->json($data);
     }
 
-    public function before(){
+    public function before()
+    {
         $data = [];
-        $services = Services::with('patient.user','serviceStatus')->whereDate('service_date', '<', Carbon::today())
+        $services = Services::with('patient.user', 'serviceStatus')->whereDate('service_date', '<', Carbon::today())
             ->orderBy('service_date', 'DESC');
 
         $data['data'] = $services->paginate(10);
@@ -41,13 +45,15 @@ class ServiceController extends Controller
         return response()->json($data);
     }
 
-    public function detail($id){
-        $service = Services::with('patient.user', 'prescriptions', 'analysis','serviceStatus')->where('id', $id)->first();
+    public function detail($id)
+    {
+        $service = Services::with('patient.user', 'prescriptions', 'analysis', 'serviceStatus')->where('id', $id)->first();
 
         return response()->json($service);
     }
 
-    public function addPrescription(Request $request, $id){
+    public function addPrescription(Request $request, $id)
+    {
 
         if (request()->hasFile('prescription')) {
             $this->validate(request(), [
@@ -73,11 +79,12 @@ class ServiceController extends Controller
         }
     }
 
-    public function removePrescription($id){
+    public function removePrescription($id)
+    {
         $prescription = Prescriptions::find($id);
         $trash  = $prescription->prescription;
 
-        $path   = 'assets/images/prescriptions/'.$trash;
+        $path   = 'assets/images/prescriptions/' . $trash;
 
         unlink($path);
 
@@ -86,7 +93,8 @@ class ServiceController extends Controller
         return response()->json($prescription);
     }
 
-    public function addAnalysis(Request $request, $id){
+    public function addAnalysis(Request $request, $id)
+    {
 
         if (request()->hasFile('analyses')) {
             $this->validate(request(), [
@@ -112,11 +120,12 @@ class ServiceController extends Controller
         }
     }
 
-    public function removeAnalysis($id){
+    public function removeAnalysis($id)
+    {
         $analyses = Analysis::find($id);
         $trash  = $analyses->analyses;
 
-        $path   = 'assets/images/analyses/'.$trash;
+        $path   = 'assets/images/analyses/' . $trash;
 
         unlink($path);
 
@@ -125,33 +134,77 @@ class ServiceController extends Controller
         return response()->json($analyses);
     }
 
-    public function changeStatus(Request $request,$id){
+    public function changeStatus(Request $request, $id)
+    {
         $service = Services::find($id)->update([
-            'status_id'=>$request->status_id
+            'status_id' => $request->status_id
         ]);
 
-        if($request->status_id==4){
+        if ($request->status_id == 4) {
             // mail ile ödeme bilgileri gönderilecektir
-        }else if($request->status_id==2){
+        } else if ($request->status_id == 2) {
             // mail ile hastanın gelmediği bildirimi yapılacaktır.
-        }else if($request->status_id==5){
+        } else if ($request->status_id == 5) {
             // mail ile hastanın muayneyi iptal etme bildirimi yapılacaktır.
         }
 
-        return response()->json(['message'=>'Success']);
+        return response()->json(['message' => 'Success']);
     }
 
-    public function add(Request $request){
-        $user = User::with('patient')->where('id',Auth::id())->first();
+    public function add(Request $request)
+    {
+        $user = User::with('patient')->where('id', Auth::id())->first();
 
         $service = Services::create([
-            'patient_id'=>$user->patient->id,
-            'service_no'=>'R-'.rand(100,9999999),
-            'status_id'=>1,
-            'desc'=>$request->desc,
-            'service_date'=>$request->service_date
+            'patient_id' => $user->patient->id,
+            'service_no' => 'R-' . rand(100, 9999999),
+            'status_id' => 1,
+            'desc' => $request->desc,
+            'service_date' => $request->service_date
         ]);
 
-        return response()->json(['message'=>'Success','service'=>$service]);
+        return response()->json(['message' => 'Success', 'service' => $service]);
+    }
+
+    public function myServicesToday()
+    {
+        $data = [];
+        $user = User::with('patient')->where('id', Auth::id())->first();
+        $services = Services::with('patient.user', 'serviceStatus')
+            ->where('patient_id', $user->patient->id)
+            ->whereDate('service_date', Carbon::today())
+            ->orderBy('service_date', 'DESC');
+
+        $data['data'] = $services->paginate(10);
+
+        return response()->json($data);
+    }
+
+    public function myServicesBefore()
+    {
+        $data = [];
+        $user = User::with('patient')->where('id', Auth::id())->first();
+        $services = Services::with('patient.user', 'serviceStatus')
+            ->where('patient_id', $user->patient->id)
+            ->whereDate('service_date', '<', Carbon::today())
+            ->orderBy('service_date', 'DESC');
+
+        $data['data'] = $services->paginate(10);
+
+        return response()->json($data);
+    }
+
+    public function myServicesAfter()
+    {
+        $data = [];
+        $user = User::with('patient')->where('id', Auth::id())->first();
+        $services = Services::with('patient.user', 'serviceStatus')
+            ->where('patient_id', $user->patient->id)
+            ->whereDate('service_date', '>', Carbon::today())
+            ->orderBy('service_date', 'DESC');
+
+        $data['data'] = $services->paginate(10);
+
+        return response()->json($data);
     }
 }

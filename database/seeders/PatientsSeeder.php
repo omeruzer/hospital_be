@@ -15,7 +15,7 @@ class PatientsSeeder extends Seeder
      */
     public function run()
     {
-        for ($i=0; $i <10 ; $i++) { 
+        for ($i=0; $i <11 ; $i++) { 
             Patients::create([
                 'user_id'=>$i+1
             ]);

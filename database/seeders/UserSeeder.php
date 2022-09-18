@@ -29,6 +29,14 @@ class UserSeeder extends Seeder
         }
 
         User::create([
+            "name"=>'Customer',
+            'email'=>'customer@gmail.com',
+            'phone'=>rand(145654,2545465),
+            'password'=>Hash::make('asd'),
+            'role_id'=>2
+        ]);
+        
+        User::create([
             "name"=>'Ömer Uzer',
             'email'=>'omeruzer@gmail.com',
             'phone'=>rand(145654,2545465),

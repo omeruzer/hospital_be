@@ -16,7 +16,7 @@ class ServicesSeeder extends Seeder
      */
     public function run()
     {
-        for ($i=0; $i <10 ; $i++) { 
+        for ($i=0; $i <11 ; $i++) { 
             $faker = \Faker\Factory::create(); 
 
             Services::create([

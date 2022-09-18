@@ -37,6 +37,9 @@ Route::group(['middleware'=>'auth:sanctum'],function(){
         Route::delete('/remove-analysis/{id}',[ServiceController::class,'removeAnalysis']);
         Route::patch('/change-status/{id}',[ServiceController::class,'changeStatus']);
         Route::post('/add',[ServiceController::class,'add']);
+        Route::get('/my-services/today',[ServiceController::class,'myServicesToday']);
+        Route::get('/my-services/before',[ServiceController::class,'myServicesBefore']);
+        Route::get('/my-services/after',[ServiceController::class,'myServicesAfter']);
     });
 
     Route::group(['prefix'=>'payment'],function(){
