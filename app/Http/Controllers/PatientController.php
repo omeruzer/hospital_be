@@ -11,9 +11,9 @@ class PatientController extends Controller
 {
     public function getAll(){
         $data=[];
-        $patients = Patients::with('user');
+        $patients = Patients::with('user')->orderByDesc('id');
 
-        $data['data']=$patients->paginate(10);
+        $data['data']=$patients->paginate(5);
 
         return response()->json($data);
     }
